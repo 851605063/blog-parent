@@ -1,9 +1,11 @@
 package com.mszlu.blog.controller;
 
+import com.mszlu.blog.utils.FileSave;
 import com.mszlu.blog.utils.QiniuUtils;
 import com.mszlu.blog.vo.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +20,9 @@ public class UploadController {
 
     @Autowired
     private QiniuUtils qiniuUtils;
-
+    @Autowired FileSave fileSave;
+    @Value("${imgpath}")
+    String path;
     @PostMapping
     public Result upload(@RequestParam("image") MultipartFile file){
         //原始文件名称 比如 aa.png
@@ -28,9 +32,11 @@ public class UploadController {
         //上传文件 上传到哪呢？ 七牛云 云服务器 按量付费 速度快 把图片发放到离用户最近的服务器上
         // 降低 我们自身应用服务器的带宽消耗
 
-        boolean upload = qiniuUtils.upload(file, fileName);
+//        boolean upload = qiniuUtils.upload(file, fileName);
+
+        boolean upload= fileSave.save(file,path,fileName);
         if (upload){
-            return Result.success(QiniuUtils.url + fileName);
+            return Result.success("http://localhost:8080/img/" + fileName);
         }
         return Result.fail(20001,"上传失败");
     }

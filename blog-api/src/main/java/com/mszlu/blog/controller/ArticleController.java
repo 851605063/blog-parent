@@ -57,7 +57,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping("listArchives")
-    @Cache(expire = 1 * 60 * 1000,name = "listArticle")
+    @Cache(expire = 1 * 15 * 1000,name = "listArticle")
     public Result listArchives(){
         return articleService.listArchives();
     }
